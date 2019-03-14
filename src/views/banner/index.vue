@@ -38,13 +38,13 @@
       layout="total, prev, pager, next"
       class="fenye"
       background
-      @current-change="currentchange()"/>
+      @current-change="currentchange($event)"/>
   </div>
 </template>
 
 <script>
 import { getBannerList } from '@/api/banner'
-
+import router from '@/router'
 export default {
   filters: {
     statusFilter(status) {
@@ -80,7 +80,8 @@ export default {
       })
     },
     currentchange(e) {
-      console.log(e)
+      const index = e
+      router.push({ name: 'list', params: { id: index }})
     }
   }
 }
