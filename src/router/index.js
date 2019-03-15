@@ -43,7 +43,7 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/example/table',
     name: 'Example',
-    meta: { title: '例子', icon: 'example' },
+    meta: { title: '例子', icon: 'example', roles: ['admin'] },
     children: [
       {
         path: 'table',
@@ -77,21 +77,22 @@ export const constantRouterMap = [
     path: '/banner',
     component: Layout,
     name: 'Banner',
-    meta: { title: '轮播图', icon: 'example' },
-    redirect: 'noredirect',
+    redirect: '/banner/index/1',
+    meta: { title: '轮播图' },
     children: [
       {
         path: 'index/:id',
         name: 'list',
         component: () => import('@/views/banner/index'),
-        meta: { title: '轮播图列表', icon: 'list' }
+        meta: { title: '轮播图列表', icon: 'example' }
       },
 
       {
-        path: 'detail',
+        path: 'detail/:id',
         name: 'edit',
+        hidden: true,
         component: () => import('@/views/banner/detail'),
-        meta: { title: '轮播图详情', icon: 'excel' }
+        meta: { title: '轮播图编辑', icon: 'excel' }
       }
     ]
   },

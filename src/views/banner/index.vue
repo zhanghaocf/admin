@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <div class="filter-container"><el-button class="filter-item" size="small" style="float:right" type="primary" icon="el-icon-edit" @click="handleCreate()">新增</el-button></div>
     <el-table
       v-loading="listLoading"
       :data="list"
@@ -27,14 +28,15 @@
       </el-table-column>
       <el-table-column align="center" label="操作" width="230" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="handleModifyStatus(scope.row,'deleted')">删除
+          <el-button type="primary" size="mini" @click="handleUpdate(scope.row.id)">编辑</el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(scope.row.id)">删除
           </el-button>
         </template>
       </el-table-column>
     </el-table>
     <el-pagination
-      :total="120"
+      :total="total"
+      :current-page.sync="pageIndex"
       layout="total, prev, pager, next"
       class="fenye"
       background
@@ -43,8 +45,7 @@
 </template>
 
 <script>
-import { getBannerList } from '@/api/banner'
-import router from '@/router'
+import { getBannerList, getBannerCount, deleteBanner } from '@/api/banner'
 export default {
   filters: {
     statusFilter(status) {
@@ -59,21 +60,38 @@ export default {
   data() {
     return {
       list: null,
-      listLoading: true
+      listLoading: true,
+      pageIndex: 1,
+      total: 0
     }
   },
   watch: {
     '$route'(to, from) {
-      console.log(to.params.id)
+      var id = Number(to.params.id)
+      this.pageIndex = !id ? 1 : id
+      this.fetchData()
     }
   },
   created() {
-    this.fetchData()
+    this.getCount()
   },
   methods: {
+    getCount() {
+      this.listLoading = true
+      getBannerCount().then(res => {
+        var id = Number(this.$route.params.id)
+        this.pageIndex = id
+        this.total = res.data.totalCount
+        this.listLoading = false
+      }).then(res => {
+        this.fetchData()
+      })
+    },
     fetchData() {
       this.listLoading = true
-      getBannerList(this.listQuery).then(response => {
+      var pageIndex = this.pageIndex
+      var obj = { pageIndex }
+      getBannerList(obj).then(response => {
         console.log(response.data.items)
         this.list = response.data.items
         this.listLoading = false
@@ -81,7 +99,44 @@ export default {
     },
     currentchange(e) {
       const index = e
-      router.push({ name: 'list', params: { id: index }})
+      this.$router.push({ name: 'list', params: { id: index }})
+    },
+    deleteitem(id) {
+      var list = this.list
+      for (var i = 0, len = list.length; i < len; i++) {
+        if (list[i].id === id) {
+          list.splice(i, 1)
+          break
+        }
+      }
+    },
+    handleDelete(index) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteBanner(Number(index)).then(res => {
+          if (res.data.success) {
+            this.deleteitem(Number(index))
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    handleUpdate(id) {
+      this.$router.push({ name: 'edit', params: { id: id }})
+    },
+    handleCreate() {
+      this.$router.push({ name: 'edit', params: { id: 0 }})
     }
   }
 }

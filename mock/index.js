@@ -26,5 +26,7 @@ Mock.mock(/\/table\/list/, 'get', tableAPI.list)
 
 //Banner
 Mock.mock(/\/banner\/getBannerList/, 'get', bannerAPI.getBannerList)
-
+Mock.mock(/\/banner\/getBannerCount/, 'get', bannerAPI.getBannerCount)
+Mock.mock(/\/banner\/deleteBanner/, 'post', bannerAPI.deleteBanner)
+Mock.mock(/\/banner\/editBanner/, 'post', bannerAPI.editBanner)
 export default Mock
