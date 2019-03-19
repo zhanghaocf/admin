@@ -25,8 +25,9 @@ Mock.mock(/\/user\/logout/, 'post', userAPI.logout)
 Mock.mock(/\/table\/list/, 'get', tableAPI.list)
 
 //Banner
-Mock.mock(/\/banner\/getBannerList/, 'get', bannerAPI.getBannerList)
-Mock.mock(/\/banner\/getBannerCount/, 'get', bannerAPI.getBannerCount)
-Mock.mock(/\/banner\/deleteBanner/, 'post', bannerAPI.deleteBanner)
+//Mock.mock(/\/banner\/getBannerList/, 'get', bannerAPI.getBannerList)
+//Mock.mock(/\/banner\/getBannerCount/, 'get', bannerAPI.getBannerCount)
+//Mock.mock(/\/banner\/deleteBanner/, 'post', bannerAPI.deleteBanner)
 Mock.mock(/\/banner\/editBanner/, 'post', bannerAPI.editBanner)
+//Mock.mock(/\/banner\/getBannerDetail/, 'get', bannerAPI.getBannerDetail)
 export default Mock

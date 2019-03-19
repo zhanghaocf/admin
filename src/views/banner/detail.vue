@@ -7,8 +7,10 @@
           :on-success="handleAvatarSuccess"
           :before-upload="beforeAvatarUpload"
           :on-error="handleAvatarError"
+          :headers="header"
+          list-type="picture"
           class="avatar-uploader"
-          action="https://jsonplaceholder.typicode.com/posts/">
+          action="/apis/banner/uploadImg">
           <img v-if="form.img" :src="form.img" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon" />
         </el-upload>
@@ -25,7 +27,7 @@
 </template>
 
 <script>
-import { editBanner } from '@/api/banner'
+import { editBanner, getBannerDetail } from '@/api/banner'
 export default {
   data() {
     return {
@@ -33,6 +35,9 @@ export default {
         url: '',
         img: '',
         id: 0
+      },
+      header: {
+        'Content-Type': 'application/x-www-form-urlencoded'
       },
       isEdit: false,
       isLoading: false
@@ -43,14 +48,31 @@ export default {
       var id = Number(to.params.id)
       this.isEdit = id > 0
       this.form.id = id
+      this.getData(id)
     }
   },
   created() {
     var id = this.$route.params.id
     this.form.id = id
     this.isEdit = id > 0
+    this.getData(id)
   },
   methods: {
+    getData(id) {
+      if (Number(id) === 0) {
+        return
+      }
+      var params = { id }
+      getBannerDetail(params).then(res => {
+        var result = res.content
+        console.log(result)
+        if (!result) {
+          this.$router.back()
+          return
+        }
+        this.form = result
+      })
+    },
     onSubmit() {
       var message = ''
       console.log(this.form)
@@ -69,7 +91,7 @@ export default {
     },
     editBanner(options) {
       editBanner(options).then(res => {
-        if (res.data.success) {
+        if (res.success) {
           this.$message('编辑成功')
           this.$router.push({ name: 'list', params: { id: 1 }})
         }
@@ -88,9 +110,9 @@ export default {
       return isJPG && isLt2M
     },
     handleAvatarSuccess(res, file) {
-      console.log(res)
-      this.form.img = URL.createObjectURL(file.raw)
-      this.isLoading = false
+      console.log(file)
+      // this.form.img = URL.createObjectURL(file.raw)
+      // this.isLoading = false
     },
     handleAvatarError(err, file) {
       console.log(err)

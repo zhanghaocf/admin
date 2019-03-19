@@ -15,16 +15,14 @@ export default {
     var totalindex = (index-1)*pagecount
     const items = {}
 		items.items = bannerList.items.slice(totalindex,totalindex+10)
-	return {
-		code: 20000,
-		data: items
-	}
+	  return {
+		  data: items.items
+	  }
   },
 	getBannerCount: () => {
 		const totalCount = bannerList.items.length
 		return {
-			code: 20000,
-			data: {totalCount}
+			data: totalCount
 		}
 	},
 	 deleteBanner: (obj) => {
@@ -37,30 +35,44 @@ export default {
 			 }
 		 }
 		 return {
-			 code: 20000,
-			 data:{
-				 success:true
-			 }
+				success:true
 		 }
 	 },
 	 editBanner: (obj) => {
 		 var options=JSON.parse(obj.body);
 		 var date=new Date();
+		 var items=bannerList.items;
 		 var now=`${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
 		 if(options.id>0){
 			 //编辑
+      for (var i=0,len=items.length;i<len;i++) {
+				if(items[i].id == options.id){
+					break;
+				}
+			}
+			bannerList.items.splice(i,1,options);
 		 }else{
 			 //新增
-			 options.id=bannerList.items.length+1;
+			 options.id=items.length+1;
 			 options.addtime=now;
 			 bannerList.items.push(options);
 		 }
+		 //不管是新增还是编辑，成功为true失败为false
 		 return {
-			 code: 20000,
-			 data:{
-				 success:true,
-				 ...options
-			 }
+				 success:true
 		 }
-	 }
+	 },
+  getBannerDetail: (obj) => {
+    var id = obj.url.split('?')[1].split('=')[1];
+		var content = {};
+		bannerList.items.forEach(item => {
+			if(item.id == id){
+				content=item;
+			}
+		})
+		//没找到content为null
+    return {
+			content
+		}
+  }
 }

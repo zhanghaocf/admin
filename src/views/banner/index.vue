@@ -9,10 +9,10 @@
       fit
       stripe
       highlight-current-row>
-      <el-table-column align="center" label="序号" width="95" prop="id" />
+      <el-table-column align="center" label="序号" width="95" type="index" />
       <el-table-column label="链接" align="center">
         <template slot-scope="scope">
-          <a :href="scope.row.url" target="_blank">{{ scope.row.url }}</a>
+          <a :href="scope.row.url" :title="scope.row.url" class="twoline" target="_blank">{{ scope.row.url }}</a>
         </template>
       </el-table-column>
       <el-table-column width="370" label="图片" align="center">
@@ -81,7 +81,7 @@ export default {
       getBannerCount().then(res => {
         var id = Number(this.$route.params.id)
         this.pageIndex = id
-        this.total = res.data.totalCount
+        this.total = res.data
         this.listLoading = false
       }).then(res => {
         this.fetchData()
@@ -92,9 +92,7 @@ export default {
       var pageIndex = this.pageIndex
       var obj = { pageIndex }
       getBannerList(obj).then(response => {
-        console.log(response.data.items)
-        this.list = response.data.items
-        this.listLoading = false
+        this.list = response.data
       })
     },
     currentchange(e) {
@@ -117,11 +115,16 @@ export default {
         type: 'warning'
       }).then(() => {
         deleteBanner(Number(index)).then(res => {
-          if (res.data.success) {
+          if (res.success) {
             this.deleteitem(Number(index))
             this.$message({
               type: 'success',
               message: '删除成功!'
+            })
+          } else {
+            this.$message({
+              type: 'success',
+              message: '删除失败!'
             })
           }
         })

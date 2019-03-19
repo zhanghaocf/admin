@@ -36,3 +36,11 @@ export function editBanner(obj) {
     }
   })
 }
+
+export function getBannerDetail(params) {
+  return request({
+    url: '/banner/getBannerDetail',
+    method: 'get',
+    params
+  })
+}

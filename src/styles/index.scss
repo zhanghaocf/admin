@@ -86,3 +86,13 @@ a:hover {
 .app-container {
   padding: 20px;
 }
+
+.twoline{
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  display: -moz-box;
+  word-break: break-all;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2; 
+  overflow:hidden;
+}
